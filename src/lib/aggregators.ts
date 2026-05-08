@@ -24,9 +24,7 @@ export function aggregate(days: DayEntry[], key: keyof DayMetrics): number | nul
   if (days.length === 0) return null
 
   const strategy = aggregationByMetric[key]
-  const values = days
-    .map((d) => d.metrics[key])
-    .filter((v): v is number => v !== null)
+  const values = days.map((d) => d.metrics[key]).filter((v): v is number => v !== null)
 
   if (values.length === 0) return null
 

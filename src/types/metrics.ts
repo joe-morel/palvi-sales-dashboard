@@ -42,3 +42,6 @@ export interface Dataset {
 }
 
 export type MetricsData = Record<DatasetKey, Dataset>
+
+/** Funnel steps shown in UI (labels come from i18n). */
+export type FunnelStepKey = 'traffic' | 'leads' | 'qualified' | 'opportunities' | 'won'
