@@ -24,7 +24,7 @@ function App(): JSX.Element {
   return (
     <PageShell>
       <Header />
-      <main className="mx-auto max-w-7xl space-y-6 px-6 py-8">
+      <main className="mx-auto max-w-7xl space-y-6 px-4 py-8 md:px-6">
         <FocusAlert />
         <KPIGrid />
         <FunnelChart />

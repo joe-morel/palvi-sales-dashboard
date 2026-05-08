@@ -8,7 +8,7 @@ import { formatPercent } from '@/lib/format'
 // Cada barra tiene ancho proporcional al valor, normalizado al primer paso.
 export function FunnelChart(): JSX.Element {
   const { funnel } = useAggregates()
-  const max = funnel[0]?.value ?? 1
+  const max = funnel[0]?.value ?? 0
 
   return (
     <Card>
@@ -21,34 +21,40 @@ export function FunnelChart(): JSX.Element {
             Traffic → Won
           </span>
         </div>
-        <div className="space-y-1">
-          {funnel.map((step, i) => {
-            const widthPct = max === 0 ? 0 : (step.value / max) * 100
-            const isFirst = i === 0
-            return (
-              <div key={step.label}>
-                {!isFirst && step.rateFromPrev !== null && (
-                  <div className="ml-24 py-1 text-xs text-muted-foreground">
-                    ↓ {formatPercent(step.rateFromPrev)}
-                  </div>
-                )}
-                <div className="flex items-center gap-3">
-                  <div className="w-20 text-right text-xs font-medium text-muted-foreground">
-                    {step.label}
-                  </div>
-                  <div className="flex h-9 flex-1 items-center">
-                    <div
-                      className="flex h-full min-w-fit items-center justify-end rounded bg-primary/85 px-3 text-xs font-semibold text-primary-foreground tabular-nums transition-[width] duration-300"
-                      style={{ width: `${Math.max(widthPct, 4)}%` }}
-                    >
-                      {step.value.toLocaleString('en-US')}
+        {max === 0 ? (
+          <div className="flex h-[180px] items-center justify-center text-xs text-muted-foreground">
+            No funnel data in range
+          </div>
+        ) : (
+          <div className="space-y-1">
+            {funnel.map((step, i) => {
+              const widthPct = (step.value / max) * 100
+              const isFirst = i === 0
+              return (
+                <div key={step.label}>
+                  {!isFirst && step.rateFromPrev !== null && (
+                    <div className="ml-20 py-1 text-xs text-muted-foreground sm:ml-24">
+                      ↓ {formatPercent(step.rateFromPrev)}
+                    </div>
+                  )}
+                  <div className="flex items-center gap-3">
+                    <div className="w-16 text-right text-xs font-medium text-muted-foreground sm:w-20">
+                      {step.label}
+                    </div>
+                    <div className="flex h-9 flex-1 items-center">
+                      <div
+                        className="flex h-full min-w-fit items-center justify-end rounded bg-primary/85 px-3 text-xs font-semibold text-primary-foreground tabular-nums transition-[width] duration-300"
+                        style={{ width: `${Math.max(widthPct, 4)}%` }}
+                      >
+                        {step.value.toLocaleString('en-US')}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )
-          })}
-        </div>
+              )
+            })}
+          </div>
+        )}
       </CardContent>
     </Card>
   )
