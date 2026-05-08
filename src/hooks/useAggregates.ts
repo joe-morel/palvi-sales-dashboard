@@ -25,6 +25,9 @@ export interface UseAggregatesResult {
   metrics: MetricAggregate[]
   funnel: FunnelStep[]
   winRate: number | null
+  // Cambio porcentual del win rate vs período anterior. null si alguno
+  // de los dos es null o si el anterior es 0.
+  winRateChange: number | null
 }
 
 const METRIC_KEYS: (keyof DayMetrics)[] = [
@@ -100,6 +103,19 @@ export function useAggregates(): UseAggregatesResult {
       dealsWon !== null && dealsLost !== null ? dealsWon + dealsLost : null
     const winRate = safeRatio(dealsWon, closed)
 
-    return { metrics, funnel, winRate }
+    // Mismo cálculo sobre el período anterior, para mostrar delta en KPI card.
+    const priorDealsWon = aggregate(priorRangeDays, 'deals_won')
+    const priorDealsLost = aggregate(priorRangeDays, 'deals_lost')
+    const priorClosed =
+      priorDealsWon !== null && priorDealsLost !== null
+        ? priorDealsWon + priorDealsLost
+        : null
+    const priorWinRate = safeRatio(priorDealsWon, priorClosed)
+    const winRateChange =
+      winRate === null || priorWinRate === null || priorWinRate === 0
+        ? null
+        : (winRate - priorWinRate) / priorWinRate
+
+    return { metrics, funnel, winRate, winRateChange }
   }, [metricsMeta, rangeDays, priorRangeDays])
 }
