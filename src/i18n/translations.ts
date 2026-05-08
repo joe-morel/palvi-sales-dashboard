@@ -32,10 +32,10 @@ export const translations = {
     metricDealsWon: 'Deals ganados',
     metricDealsLost: 'Deals perdidos',
     metricResponseTime: 'Tiempo de respuesta',
-    metricAvgDealCycleDays: 'Ciclo de deal',
+    metricAvgDealCycleDays: 'Ciclo del deal',
     metricStaleDeals: 'Deals estancados',
     metricSupportTickets: 'Tickets de soporte',
-    metricSupportResolution: 'Resolución soporte',
+    metricSupportResolution: 'Resolución en soporte',
     funnelSectionTitle: 'Salud del embudo',
     funnelSectionSubtitle: 'Tráfico → Ganados',
     funnelTraffic: 'Tráfico',
@@ -49,6 +49,7 @@ export const translations = {
     noDataInRange: 'Sin datos en el periodo',
     noFunnelData: 'Sin datos de embudo en el periodo',
     comparedToPreviousPeriod: 'vs periodo anterior',
+    footerDataNotice: 'Los datos se actualizan automáticamente al cierre de cada día.',
   },
   en: {
     appTitle: 'Sales Pulse',
@@ -92,6 +93,7 @@ export const translations = {
     noDataInRange: 'No data in range',
     noFunnelData: 'No funnel data in range',
     comparedToPreviousPeriod: 'vs prior period',
+    footerDataNotice: 'Figures refresh automatically after each day closes.',
   },
 } as const
 

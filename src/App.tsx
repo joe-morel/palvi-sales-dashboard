@@ -1,6 +1,7 @@
 import type { JSX } from 'react'
 import { ExecutiveTrendChart } from '@/components/charts/ExecutiveTrendChart'
 import { FunnelChart } from '@/components/charts/FunnelChart'
+import { DashboardFooter } from '@/components/layout/DashboardFooter'
 import { Header } from '@/components/layout/Header'
 import { PageShell } from '@/components/layout/PageShell'
 import { FocusAlert } from '@/components/kpi/FocusAlert'
@@ -18,6 +19,7 @@ function App(): JSX.Element {
           <ExecutiveTrendChart />
         </div>
       </main>
+      <DashboardFooter />
     </PageShell>
   )
 }

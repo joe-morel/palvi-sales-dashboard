@@ -44,14 +44,15 @@
 
 :root {
   --radius: 0.625rem;
-  --app-bg-top: oklch(0.97 0.018 270);
+  --app-bg-top: oklch(0.985 0.014 285);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.42 0.19 270);
+  /* Violeta tipo referencia (#5D5FEF aprox.), sin depender solo del índigo frío */
+  --primary: oklch(0.52 0.2 285);
   --primary-foreground: oklch(0.99 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -63,8 +64,9 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.52 0.18 270);
-  --chart-2: oklch(0.55 0.14 165);
+  /* Serie 1: violeta; serie 2: verde azulado (contraste claro con la primera) */
+  --chart-1: oklch(0.56 0.2 285);
+  --chart-2: oklch(0.52 0.14 175);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);

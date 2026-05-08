@@ -40,7 +40,7 @@ export function KPICard({
   return (
     <Card
       size="sm"
-      className="border-border/80 bg-card/90 shadow-sm shadow-indigo-950/5 ring-1 ring-border/60"
+      className="border-border/80 bg-card/90 shadow-sm shadow-black/5 ring-1 ring-border/60"
     >
       <CardContent className="space-y-2">
         <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">

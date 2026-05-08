@@ -78,13 +78,13 @@ export function FocusAlert(): JSX.Element {
   }
 
   return (
-    <Card className="overflow-hidden border-indigo-500/25 bg-gradient-to-br from-indigo-50/90 via-white to-amber-50/40 shadow-md shadow-indigo-950/10 ring-1 ring-indigo-500/20">
+    <Card className="overflow-hidden border-primary/25 bg-gradient-to-br from-primary/[0.07] via-white to-teal-50/35 shadow-md shadow-black/10 ring-1 ring-primary/20">
       <CardContent className="space-y-3 py-4">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-semibold uppercase tracking-wide text-indigo-900">
+          <span className="text-xs font-semibold uppercase tracking-wide text-foreground">
             {t('executiveSummary')}
           </span>
-          <span className="rounded-full bg-white/80 px-2 py-0.5 text-[11px] font-medium text-indigo-700 ring-1 ring-indigo-500/25">
+          <span className="rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-medium text-primary ring-1 ring-primary/25">
             {t('todayFocusAlt')}
           </span>
         </div>
@@ -99,7 +99,7 @@ export function FocusAlert(): JSX.Element {
                 className="flex min-h-[7.5rem] flex-col rounded-xl border border-border/70 bg-white/90 p-3 shadow-sm ring-1 ring-border/50"
               >
                 <div className="flex items-start gap-2">
-                  <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-sm">
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
                     <Icon className="size-4" aria-hidden />
                   </span>
                   <div className="min-w-0 flex-1 space-y-1">

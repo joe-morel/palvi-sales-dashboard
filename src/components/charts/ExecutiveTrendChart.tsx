@@ -44,7 +44,7 @@ export function ExecutiveTrendChart(): JSX.Element {
   const hasAny = hasLeads || hasWon
 
   return (
-    <Card className="border-border/80 shadow-sm shadow-indigo-950/5 ring-1 ring-border/60">
+    <Card className="border-border/80 shadow-sm shadow-black/5 ring-1 ring-border/60">
       <CardContent className="flex flex-col gap-3 pt-4">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <h3 className="text-sm font-semibold tracking-tight text-foreground">
