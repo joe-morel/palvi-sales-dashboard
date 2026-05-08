@@ -21,9 +21,13 @@ export function DatasetSwitcher(): JSX.Element {
         value={datasetKey}
         onValueChange={(value) => setDatasetKey(value as DatasetKey)}
       >
-        <TabsList className="h-11 min-h-[44px] gap-1 bg-muted/80 p-1">
+        <TabsList className="h-11 min-h-[44px] gap-1 rounded-xl border border-border/80 bg-card p-1 shadow-sm shadow-black/5">
           {DATASET_KEYS.map((key) => (
-            <TabsTrigger key={key} className="min-h-10 min-w-10 px-3 text-sm" value={key}>
+            <TabsTrigger
+              key={key}
+              className="min-h-9 min-w-10 rounded-lg px-3 text-sm data-active:bg-primary data-active:text-primary-foreground dark:data-active:bg-primary dark:data-active:text-primary-foreground"
+              value={key}
+            >
               {key}
             </TabsTrigger>
           ))}

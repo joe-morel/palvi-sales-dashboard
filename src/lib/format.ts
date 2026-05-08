@@ -8,15 +8,21 @@ const DURATION_UNITS = new Set(['min', 'hours', 'days'])
 // - Durations (min/hours/days): un decimal + unidad.
 // - Otros: un decimal sin unidad.
 // null se representa con guión largo, nunca con texto literal "null".
-export function formatValue(value: number | null, unit: string): string {
+export function formatValue(value: number | null, unit: string, locale: string = 'en-US'): string {
   if (value === null) return '—'
   if (COUNT_UNITS.has(unit)) {
-    return Math.round(value).toLocaleString('en-US')
+    return Math.round(value).toLocaleString(locale)
   }
   if (DURATION_UNITS.has(unit)) {
-    return `${value.toFixed(1)} ${unit}`
+    return `${value.toLocaleString(locale, {
+      maximumFractionDigits: 1,
+      minimumFractionDigits: 1,
+    })} ${unit}`
   }
-  return value.toFixed(1)
+  return value.toLocaleString(locale, {
+    maximumFractionDigits: 1,
+    minimumFractionDigits: 1,
+  })
 }
 
 // Formatea un cambio porcentual (e.g. 0.124 → "+12.4%", -0.085 → "-8.5%").

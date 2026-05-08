@@ -26,9 +26,13 @@ export function RangeSelect(): JSX.Element {
         value={rangePreset}
         onValueChange={(value) => setRangePreset(value as DateRangePreset)}
       >
-        <TabsList className="h-11 min-h-[44px] gap-1 bg-muted/80 p-1">
+        <TabsList className="h-11 min-h-[44px] gap-1 rounded-xl border border-border/80 bg-card p-1 shadow-sm shadow-black/5">
           {PRESETS.map((p) => (
-            <TabsTrigger key={p.value} className="min-h-10 px-3 text-sm sm:px-4" value={p.value}>
+            <TabsTrigger
+              key={p.value}
+              className="min-h-9 rounded-lg px-3 text-sm data-active:bg-primary data-active:text-primary-foreground dark:data-active:bg-primary dark:data-active:text-primary-foreground sm:px-4"
+              value={p.value}
+            >
               {t(p.labelKey)}
             </TabsTrigger>
           ))}
