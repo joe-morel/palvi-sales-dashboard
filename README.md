@@ -10,6 +10,8 @@ npm run build  # bundle de producción en dist/
 
 ## Decisiones técnicas
 
+- **i18n ligero (ES/EN).** Context + `translations.ts` sin i18next; idioma en `localStorage` (`sales-pulse-lang`), `document.documentElement.lang`, etiquetas de métricas y recomendaciones de foco centralizadas para evitar mezcla ES/EN en UI.
+- **UI ejecutiva “Sales Pulse”.** Gradiente de fondo suave, primario índigo, hero de resumen con hasta 3 insights y recomendación por `metricKey`, 4 KPIs (win rate, leads creados, tiempo de respuesta, deals estancados), embudo con pasos i18n por `FunnelStepKey`, tendencia combinada leads + deals ganados (eje dual).
 - **Tailwind v4 + shadcn/ui (style `base-nova`).** shadcn 4 ya defaultea a Tailwind v4 — pelearle a la herramienta consume tiempo que no agrega valor. Tokens `oklch` + utilities atómicas dejan UI rápida y theme-aware sin construir un design system propio.
 - **Zustand** para `datasetKey` y `rangePreset`. El selector vive en el header y los consumidores en el body — Context implicaría prop-drilling o un Provider extra; Redux es overkill para 2 piezas de estado.
 - **Recharts solo para time series; Funnel custom HTML.** El componente `FunnelChart` de Recharts no controla bien las tasas de conversión entre pasos. 5 barras proporcionales con tasas anotadas debajo cubren mejor el caso y pesan menos.
@@ -25,4 +27,4 @@ npm run build  # bundle de producción en dist/
 - **Code splitting de Recharts** (~700KB del bundle de 1MB). Para producción real, dynamic import + Suspense en los charts.
 - **Selector de métrica** en las time series. Ahora muestro 4 hardcodeadas (traffic, deals_won, response time, stale_deals); un selector dejaría al usuario explorar las 11 sin tocar código.
 - **Tests** — Vitest unit para `analytics`/`aggregators` (la lógica del walk-through es donde más vale tests), Playwright e2e contra los 4 datasets. El brief no los pide y los tipos cubren mucho, pero un PR review serio los esperaría.
-- **Polish** — auditoría de a11y con axe, toggle light/dark (los tokens shadcn ya soportan `.dark`), mobile-first redesign del header. Lo básico funciona, falta nivel "production".
+- **Polish** — auditoría de a11y con axe; dark mode alineado a los nuevos tokens; code-splitting de Recharts para el chunk >500KB.
