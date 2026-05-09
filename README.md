@@ -1,73 +1,58 @@
-# React + TypeScript + Vite
+# palvi-sales-dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Decisiones técnicas
 
-Currently, two official plugins are available:
+Construí un dashboard ejecutivo para que un Jefe de Ventas pueda abrirlo en la mañana y entender en
+menos de 5 minutos dónde poner foco. La app corre con React + TypeScript sobre Vite; para levantarla
+localmente: `npm install` y luego `npm run dev`.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+La lectura de datos está anclada a `metadata.end_date` de cada dataset, no a la fecha real del sistema.
+Esto hace que A/B/C/D sean deterministas y comparables aunque el dashboard se abra meses después. El
+estado global es mínimo y vive en Zustand: dataset activo y rango (`7d`, `30d`, `90d`).
 
-## React Compiler
+La lógica de agregación está centralizada en `src/lib/aggregators.ts`: métricas acumulables usan
+`sum`, promedios diarios usan `avg` filtrando `null`, y snapshots como `stale_deals` usan `last`.
+El foco ejecutivo se calcula en `src/lib/analytics.ts`, comparando la última semana contra la anterior
+y ajustando el deterioro según `direction`. Por eso una métrica `lower_is_better` puede subir y verse
+roja: la flecha muestra movimiento real, el color muestra si eso mejora o empeora.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+En UI prioricé claridad antes que cantidad: resumen ejecutivo con recomendaciones, cuatro KPIs clave,
+embudo de conversión y tendencia principal. Separé la tendencia en mini-gráficos para evitar un doble
+eje confuso, e hice el embudo en HTML custom para mostrar volumen y conversión por etapa de forma más
+directa que con un chart genérico. La interfaz soporta ES/EN y tema claro/oscuro con tokens compartidos.
 
-## Expanding the ESLint configuration
+Detalle de implementación:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **i18n ligero (ES/EN).** Context + `translations.ts` sin i18next; idioma en `localStorage`
+  (`sales-pulse-lang`), `document.documentElement.lang`, etiquetas de métricas y recomendaciones de foco
+  centralizadas para evitar mezcla ES/EN en UI.
+- **UI ejecutiva “Sales Pulse”.** Gradiente de fondo suave, primario índigo, hero de resumen con hasta 3
+  insights y recomendación por `metricKey`, 4 KPIs (win rate, leads creados, tiempo de respuesta, deals
+  estancados), embudo con pasos i18n por `FunnelStepKey`, tendencia combinada leads + deals ganados (eje
+  dual).
+- **Tailwind v4 + shadcn/ui (style `base-nova`).** Tokens `oklch` + utilities atómicas.
+- **Zustand** para `datasetKey` y `rangePreset`.
+- **Recharts para series; embudo en HTML custom** para tasas entre pasos.
+- **“Hoy” = `dataset.metadata.end_date`, no `new Date()`.**
+- **Agregación declarativa por métrica** ([`src/lib/aggregators.ts`](src/lib/aggregators.ts)).
+- **Foco del día:** `signedChange` para ordenar, `rawChange` para mostrar
+  ([`src/lib/analytics.ts`](src/lib/analytics.ts)).
+- **Tipos** reflejan nulls del brief; `aggregate()` los filtra.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Segunda iteración
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Agregaría tests unitarios para `aggregators.ts` y `analytics.ts`, porque ahí vive la lógica más crítica:
+comparaciones de período, nulls y semántica de `direction`. También sumaría un test visual o e2e básico
+para recorrer A/B/C/D y verificar que los datos cambian sin romper el layout.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Para producción real, optimizaría el bundle separando Recharts con dynamic import, ya que hoy Vite avisa
+que el chunk supera 500 kB. También exploraría un selector de métrica en tendencia, pero solo como capa
+secundaria: para el uso de 5 minutos, mantener pocas señales visibles ayuda más que mostrar las 11
+métricas al mismo tiempo.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Finalmente, evaluaría un rango custom de fechas y benchmarks por objetivo comercial. Los presets actuales
+son suficientes para la tarea, pero un equipo real podría querer comparar campañas, lanzamientos o semanas
+fiscales específicas.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Otras líneas posibles: date range picker arbitrario, rolling 7d en series, más cobertura de tests y
+auditoría a11y con axe.

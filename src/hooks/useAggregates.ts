@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { aggregate } from '@/lib/aggregators'
 import { useMetrics } from './useMetrics'
-import type { DayMetrics, MetricMeta } from '@/types/metrics'
+import type { DayMetrics, FunnelStepKey, MetricMeta } from '@/types/metrics'
 
 export interface MetricAggregate {
   meta: MetricMeta
@@ -13,8 +13,8 @@ export interface MetricAggregate {
 }
 
 export interface FunnelStep {
-  // Nombre del paso del embudo (lo que ven los visitantes).
-  label: string
+  /** Stable id for i18n labels */
+  stepKey: FunnelStepKey
   // Total absoluto del paso (suma sobre el período).
   value: number
   // Tasa de conversión de este paso desde el anterior. null en el primero.
@@ -61,9 +61,7 @@ export function useAggregates(): UseAggregatesResult {
       const current = aggregate(rangeDays, key)
       const prior = aggregate(priorRangeDays, key)
       const rawChange =
-        current === null || prior === null || prior === 0
-          ? null
-          : (current - prior) / prior
+        current === null || prior === null || prior === 0 ? null : (current - prior) / prior
       return [{ meta, current, prior, rawChange }]
     })
 
@@ -78,20 +76,24 @@ export function useAggregates(): UseAggregatesResult {
     const dealsLost = aggregate(rangeDays, 'deals_lost')
 
     const funnel: FunnelStep[] = [
-      { label: 'Traffic', value: traffic ?? 0, rateFromPrev: null },
-      { label: 'Leads', value: leadsCreated ?? 0, rateFromPrev: safeRatio(leadsCreated, traffic) },
+      { stepKey: 'traffic', value: traffic ?? 0, rateFromPrev: null },
       {
-        label: 'Qualified',
+        stepKey: 'leads',
+        value: leadsCreated ?? 0,
+        rateFromPrev: safeRatio(leadsCreated, traffic),
+      },
+      {
+        stepKey: 'qualified',
         value: leadsQualified ?? 0,
         rateFromPrev: safeRatio(leadsQualified, leadsCreated),
       },
       {
-        label: 'Deals',
+        stepKey: 'opportunities',
         value: dealsCreated ?? 0,
         rateFromPrev: safeRatio(dealsCreated, leadsQualified),
       },
       {
-        label: 'Won',
+        stepKey: 'won',
         value: dealsWon ?? 0,
         rateFromPrev: safeRatio(dealsWon, dealsCreated),
       },
@@ -99,17 +101,14 @@ export function useAggregates(): UseAggregatesResult {
 
     // Win rate del período: ganados / (ganados + perdidos).
     // Métrica de período, no de cohorte — lo dice el brief explícitamente.
-    const closed =
-      dealsWon !== null && dealsLost !== null ? dealsWon + dealsLost : null
+    const closed = dealsWon !== null && dealsLost !== null ? dealsWon + dealsLost : null
     const winRate = safeRatio(dealsWon, closed)
 
     // Mismo cálculo sobre el período anterior, para mostrar delta en KPI card.
     const priorDealsWon = aggregate(priorRangeDays, 'deals_won')
     const priorDealsLost = aggregate(priorRangeDays, 'deals_lost')
     const priorClosed =
-      priorDealsWon !== null && priorDealsLost !== null
-        ? priorDealsWon + priorDealsLost
-        : null
+      priorDealsWon !== null && priorDealsLost !== null ? priorDealsWon + priorDealsLost : null
     const priorWinRate = safeRatio(priorDealsWon, priorClosed)
     const winRateChange =
       winRate === null || priorWinRate === null || priorWinRate === 0

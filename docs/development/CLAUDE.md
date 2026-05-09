@@ -1,7 +1,10 @@
-# CLAUDE.md — Contexto para Claude Code
+# CLAUDE.md — Contexto de desarrollo asistido por IA
 
-Este archivo es leído automáticamente por Claude Code al abrir el proyecto.
-No modificar sin revisar el PLAN.md primero.
+Este archivo se usó como contexto para Claude Code durante la construcción inicial del proyecto.
+Se conserva archivado en `docs/development/` para transparencia del proceso y para explicar las
+convenciones que guiaron la implementación.
+
+No es necesario para ejecutar la aplicación.
 
 ---
 
@@ -142,16 +145,7 @@ win rate          = deals_won / (deals_won + deals_lost)
 
 ## Estado del proyecto
 
-Ver PLAN.md para el detalle completo de cada PR.
-
-PRs planificados:
-
-1. `feat/project-setup` — setup inicial ✅ (empezar aquí)
-2. `feat/data-layer` — tipos, hooks, zustand, analytics
-3. `feat/shell-layout` — layout y selector de dataset
-4. `feat/kpi-cards` — KPI cards y alertas
-5. `feat/charts` — funnel y series de tiempo
-6. `feat/polish` — responsive, empty states, README final
+Ver `docs/development/PLAN.md` para el plan original y el estado final resumido.
 
 ---
 

@@ -18,7 +18,7 @@ interface DashboardState {
 
 export const useDashboardStore = create<DashboardState>((set) => ({
   datasetKey: 'A',
-  rangePreset: '30d',
+  rangePreset: '7d',
   setDatasetKey: (key) => set({ datasetKey: key }),
   setRangePreset: (preset) => set({ rangePreset: preset }),
 }))

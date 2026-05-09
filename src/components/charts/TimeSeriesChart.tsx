@@ -43,9 +43,7 @@ export function TimeSeriesChart({
     <Card>
       <CardContent>
         <div className="mb-3 flex items-baseline justify-between gap-2">
-          <h3 className="text-sm font-semibold text-foreground">
-            {meta.label}
-          </h3>
+          <h3 className="text-sm font-semibold text-foreground">{meta.label}</h3>
           <span className="text-xs text-muted-foreground">{meta.unit}</span>
         </div>
         {data.length === 0 ? (
@@ -54,15 +52,8 @@ export function TimeSeriesChart({
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={180}>
-            <LineChart
-              data={data}
-              margin={{ top: 4, right: 8, left: -16, bottom: 0 }}
-            >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke="var(--border)"
-                vertical={false}
-              />
+            <LineChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
               <XAxis
                 dataKey="date"
                 tickFormatter={(d: string) => format(parseISO(d), 'MMM d')}
@@ -89,14 +80,10 @@ export function TimeSeriesChart({
                   color: 'var(--popover-foreground)',
                 }}
                 labelFormatter={(label) =>
-                  typeof label === 'string'
-                    ? format(parseISO(label), 'MMM d, yyyy')
-                    : ''
+                  typeof label === 'string' ? format(parseISO(label), 'MMM d, yyyy') : ''
                 }
                 formatter={(value) => [
-                  typeof value === 'number'
-                    ? formatValue(value, meta.unit)
-                    : '—',
+                  typeof value === 'number' ? formatValue(value, meta.unit) : '—',
                   meta.label,
                 ]}
               />
