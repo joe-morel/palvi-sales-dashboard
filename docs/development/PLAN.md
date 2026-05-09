@@ -1,7 +1,11 @@
-# palvi-sales-dashboard — Plan de Desarrollo
+# palvi-sales-dashboard — Plan de desarrollo
 
-Tarea técnica para PALVI. Dashboard ejecutivo de métricas B2B SaaS.
-El objetivo es que el Jefe de Ventas abra esto en la mañana y sepa en 5 minutos dónde poner el foco.
+Documento de trabajo usado durante la implementación de la tarea técnica de PALVI.
+Se conserva en `docs/development/` para dejar trazabilidad del razonamiento, alcance y decisiones de
+descomposición. No forma parte de la aplicación en runtime.
+
+El objetivo del producto final es que el Jefe de Ventas abra el dashboard en la mañana y sepa en 5
+minutos dónde poner el foco.
 
 ---
 
@@ -18,25 +22,28 @@ El objetivo es que el Jefe de Ventas abra esto en la mañana y sepa en 5 minutos
 
 ---
 
-## Estructura de carpetas
+## Estructura final de carpetas
 
 ```
 src/
 ├── components/
 │   ├── ui/              ← shadcn components (auto-generados)
-│   ├── layout/          ← Header, Sidebar, PageShell
+│   ├── layout/          ← Header, PageShell, DashboardFooter
 │   ├── kpi/             ← KPICard, KPIGrid, FocusAlert
-│   ├── charts/          ← FunnelChart, TimeSeriesChart, StaleDealsList
+│   ├── charts/          ← FunnelChart, ExecutiveTrendChart, TimeSeriesChart
 │   └── dataset/         ← DatasetSwitcher (tabs A/B/C/D)
 ├── hooks/
 │   ├── useMetrics.ts    ← acceso al dataset activo
-│   └── useAggregates.ts ← cálculo de win rate, funnel rates, rolling avg
+│   ├── useAggregates.ts ← cálculo de win rate, funnel y métricas agregadas
+│   └── useTheme.ts      ← tema claro/oscuro
 ├── store/
 │   └── dashboardStore.ts ← Zustand: dataset activo, rango de fechas
 ├── types/
 │   └── metrics.ts       ← todos los tipos TypeScript del dataset
 ├── lib/
 │   ├── utils.ts         ← cn() helper
+│   ├── ui.ts            ← clases compartidas de superficies/cards
+│   ├── format.ts        ← formato de valores, porcentajes y semántica de mejora
 │   └── analytics.ts     ← lógica de detección de alertas / foco del día
 ├── data/
 │   └── metrics.json     ← dataset original (4 datasets: A, B, C, D)
@@ -47,7 +54,22 @@ src/
 
 ---
 
-## PRs — Orden de trabajo
+## Estado final
+
+La implementación final consolidó los PRs planeados en una sola entrega:
+
+- App Vite + React + TypeScript.
+- Dataset switcher A/B/C/D.
+- Presets 7d/30d/90d comparados contra el período anterior.
+- Resumen ejecutivo con top deterioros por `direction`.
+- KPI cards con color semántico.
+- Embudo con volumen y conversión por etapa.
+- Tendencia principal con mini charts separados para evitar doble eje.
+- i18n ES/EN.
+- Tema claro/oscuro.
+- Footer con rango exacto y crédito del creador.
+
+## PRs — Orden de trabajo original
 
 ### PR #1 — Setup inicial
 

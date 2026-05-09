@@ -1,28 +1,37 @@
 # palvi-sales-dashboard
 
-Dashboard ejecutivo para un Jefe de Ventas B2B SaaS. Lee `src/data/metrics.json` (4 datasets A/B/C/D, 365 días cada uno) y muestra en una pantalla dónde poner foco hoy: foco del día, KPI cards con delta vs período anterior, funnel de conversión y series temporales.
-
-```bash
-npm install
-npm run dev    # http://localhost:5173
-npm run build  # bundle de producción en dist/
-```
-
 ## Decisiones técnicas
 
-- **Tailwind v4 + shadcn/ui (style `base-nova`).** shadcn 4 ya defaultea a Tailwind v4 — pelearle a la herramienta consume tiempo que no agrega valor. Tokens `oklch` + utilities atómicas dejan UI rápida y theme-aware sin construir un design system propio.
-- **Zustand** para `datasetKey` y `rangePreset`. El selector vive en el header y los consumidores en el body — Context implicaría prop-drilling o un Provider extra; Redux es overkill para 2 piezas de estado.
-- **Recharts solo para time series; Funnel custom HTML.** El componente `FunnelChart` de Recharts no controla bien las tasas de conversión entre pasos. 5 barras proporcionales con tasas anotadas debajo cubren mejor el caso y pesan menos.
-- **"Hoy" = `dataset.metadata.end_date`, no `new Date()`.** El dataset cubre `2025-04-26 → 2026-04-25`; usar la fecha real del sistema dejaría los últimos días en blanco según cuándo se abra el dashboard. Anclar a `end_date` lo hace determinista por dataset.
-- **Estrategia de agregación declarativa por métrica** ([`src/lib/aggregators.ts`](src/lib/aggregators.ts)): counts → `sum`, promedios diarios → `avg` (filtrando nulls), snapshots como `stale_deals` → `last`. La intención queda en datos, no escondida en `if/else`.
-- **Foco del día: `signedChange` para ordenar, `rawChange` para mostrar.** [`src/lib/analytics.ts`](src/lib/analytics.ts) ajusta el signo según `direction` (subir el tiempo de respuesta es malo), ordena por deterioro y devuelve top-3. El display usa el cambio crudo — el banner rojo ya transmite "esto es malo", el porcentaje natural es más legible.
-- **Tipos reflejan el contrato del brief, no el sample.** El dataset entregado no trae nulls, pero el brief dice que pueden existir; los tipos los marcan `number | null` y `aggregate()` los filtra.
+Construí un dashboard ejecutivo para que un Jefe de Ventas pueda abrirlo en la mañana y entender en
+menos de 5 minutos dónde poner foco. La app corre con React + TypeScript sobre Vite; para levantarla
+localmente: `npm install` y luego `npm run dev`.
+
+La lectura de datos está anclada a `metadata.end_date` de cada dataset, no a la fecha real del sistema.
+Esto hace que A/B/C/D sean deterministas y comparables aunque el dashboard se abra meses después. El
+estado global es mínimo y vive en Zustand: dataset activo y rango (`7d`, `30d`, `90d`).
+
+La lógica de agregación está centralizada en `src/lib/aggregators.ts`: métricas acumulables usan
+`sum`, promedios diarios usan `avg` filtrando `null`, y snapshots como `stale_deals` usan `last`.
+El foco ejecutivo se calcula en `src/lib/analytics.ts`, comparando la última semana contra la anterior
+y ajustando el deterioro según `direction`. Por eso una métrica `lower_is_better` puede subir y verse
+roja: la flecha muestra movimiento real, el color muestra si eso mejora o empeora.
+
+En UI prioricé claridad antes que cantidad: resumen ejecutivo con recomendaciones, cuatro KPIs clave,
+embudo de conversión y tendencia principal. Separé la tendencia en mini-gráficos para evitar un doble
+eje confuso, e hice el embudo en HTML custom para mostrar volumen y conversión por etapa de forma más
+directa que con un chart genérico. La interfaz soporta ES/EN y tema claro/oscuro con tokens compartidos.
 
 ## Segunda iteración
 
-- **Custom date range picker** + comparación entre períodos arbitrarios. Hoy hay solo presets (7d/30d/90d), suficiente para una mañana de Sales Manager pero no para un análisis post-mortem.
-- **Rolling 7d** en las time series para suavizar ruido y revelar tendencia. Iba en el plan original pero el shape correcto se decide mejor con la API de Recharts a la mano.
-- **Code splitting de Recharts** (~700KB del bundle de 1MB). Para producción real, dynamic import + Suspense en los charts.
-- **Selector de métrica** en las time series. Ahora muestro 4 hardcodeadas (traffic, deals_won, response time, stale_deals); un selector dejaría al usuario explorar las 11 sin tocar código.
-- **Tests** — Vitest unit para `analytics`/`aggregators` (la lógica del walk-through es donde más vale tests), Playwright e2e contra los 4 datasets. El brief no los pide y los tipos cubren mucho, pero un PR review serio los esperaría.
-- **Polish** — auditoría de a11y con axe, toggle light/dark (los tokens shadcn ya soportan `.dark`), mobile-first redesign del header. Lo básico funciona, falta nivel "production".
+Agregaría tests unitarios para `aggregators.ts` y `analytics.ts`, porque ahí vive la lógica más crítica:
+comparaciones de período, nulls y semántica de `direction`. También sumaría un test visual o e2e básico
+para recorrer A/B/C/D y verificar que los datos cambian sin romper el layout.
+
+Para producción real, optimizaría el bundle separando Recharts con dynamic import, ya que hoy Vite avisa
+que el chunk supera 500 kB. También exploraría un selector de métrica en tendencia, pero solo como capa
+secundaria: para el uso de 5 minutos, mantener pocas señales visibles ayuda más que mostrar las 11
+métricas al mismo tiempo.
+
+Finalmente, evaluaría un rango custom de fechas y benchmarks por objetivo comercial. Los presets actuales
+son suficientes para la tarea, pero un equipo real podría querer comparar campañas, lanzamientos o semanas
+fiscales específicas.
