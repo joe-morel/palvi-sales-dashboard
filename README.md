@@ -25,3 +25,7 @@ Agregaría tests unitarios para `aggregators.ts`, `analytics.ts` y `format.ts`, 
 También agregaría una verificación e2e simple para recorrer A/B/C/D y confirmar que los valores, insights y visualizaciones cambian correctamente sin romper el layout.
 
 Para una versión de producción evaluaría optimizar el bundle separando Recharts con dynamic import, agregar objetivos o benchmarks configurables por métrica y permitir rangos de fecha personalizados. Mantendría esas mejoras fuera de esta entrega porque el foco de la tarea es claridad ejecutiva y toma de decisión rápida, no cantidad de features.
+
+## Deploy
+
+Salida estática con `npm run build` (`dist/`). En Vercel el proyecto usa esa carpeta como artefacto; cada push a `main` dispara un nuevo deployment.
