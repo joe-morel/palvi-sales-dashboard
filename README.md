@@ -21,6 +21,24 @@ embudo de conversión y tendencia principal. Separé la tendencia en mini-gráfi
 eje confuso, e hice el embudo en HTML custom para mostrar volumen y conversión por etapa de forma más
 directa que con un chart genérico. La interfaz soporta ES/EN y tema claro/oscuro con tokens compartidos.
 
+Detalle de implementación:
+
+- **i18n ligero (ES/EN).** Context + `translations.ts` sin i18next; idioma en `localStorage`
+  (`sales-pulse-lang`), `document.documentElement.lang`, etiquetas de métricas y recomendaciones de foco
+  centralizadas para evitar mezcla ES/EN en UI.
+- **UI ejecutiva “Sales Pulse”.** Gradiente de fondo suave, primario índigo, hero de resumen con hasta 3
+  insights y recomendación por `metricKey`, 4 KPIs (win rate, leads creados, tiempo de respuesta, deals
+  estancados), embudo con pasos i18n por `FunnelStepKey`, tendencia combinada leads + deals ganados (eje
+  dual).
+- **Tailwind v4 + shadcn/ui (style `base-nova`).** Tokens `oklch` + utilities atómicas.
+- **Zustand** para `datasetKey` y `rangePreset`.
+- **Recharts para series; embudo en HTML custom** para tasas entre pasos.
+- **“Hoy” = `dataset.metadata.end_date`, no `new Date()`.**
+- **Agregación declarativa por métrica** ([`src/lib/aggregators.ts`](src/lib/aggregators.ts)).
+- **Foco del día:** `signedChange` para ordenar, `rawChange` para mostrar
+  ([`src/lib/analytics.ts`](src/lib/analytics.ts)).
+- **Tipos** reflejan nulls del brief; `aggregate()` los filtra.
+
 ## Segunda iteración
 
 Agregaría tests unitarios para `aggregators.ts` y `analytics.ts`, porque ahí vive la lógica más crítica:
@@ -35,3 +53,6 @@ métricas al mismo tiempo.
 Finalmente, evaluaría un rango custom de fechas y benchmarks por objetivo comercial. Los presets actuales
 son suficientes para la tarea, pero un equipo real podría querer comparar campañas, lanzamientos o semanas
 fiscales específicas.
+
+Otras líneas posibles: date range picker arbitrario, rolling 7d en series, más cobertura de tests y
+auditoría a11y con axe.
